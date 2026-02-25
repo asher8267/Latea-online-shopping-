@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Latea Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{font-family:sans-serif;margin:0;padding:0;background:#e0f7fa;}
+header{background:#00796b;color:white;padding:20px;text-align:center;font-size:26px;}
+section{padding:20px;}
+h2{color:#00796b;margin-bottom:10px;}
+table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px;}
+th,td{padding:10px;border:1px solid #ccc;text-align:left;}
+th{background:#004d40;color:white;}
+button{padding:6px 10px;border:none;border-radius:6px;background:#ffcc00;cursor:pointer;margin:2px;}
+.card{background:white;padding:10px;margin:10px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+</style>
+</head>
+<body>
+
+<header>Latea Premium Backend Dashboard</header>
+
+<section>
+<h2>Registered Users</h2>
+<table id="usersTable">
+<tr><th>Email</th><th>ID</th><th>Action</th></tr>
+</table>
+</section>
+
+<section>
+<h2>Orders</h2>
+<table id="ordersTable">
+<tr><th>User ID</th><th>Products</th><th>Total Qty</th><th>Action</th></tr>
+</table>
+</section>
+
+<section>
+<h2>Products</h2>
+<table id="productsTable">
+<tr><th>Name</th><th>Price</th><th>ID</th><th>Action</th></tr>
+</table>
+</section>
+
+<script>
+// ------------------ LOAD USERS ------------------
+async function loadUsers(){
+  const res = await fetch('/api/users');
+  const data = await res.json();
+  const table = document.getElementById('usersTable');
+  table.innerHTML = "<tr><th>Email</th><th>ID</th><th>Action</th></tr>";
+  data.forEach(u=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML=`<td>${u.email}</td><td>${u._id}</td><td><button onclick="verifyUser('${u._id}')">Verify</button></td>`;
+    table.appendChild(tr);
+  });
+}
+
+// ------------------ VERIFY USER BUTTON ------------------
+function verifyUser(id){
+  alert("User Verified: " + id);
+  // Later you can call backend to mark verified
+}
+
+// ------------------ LOAD PRODUCTS ------------------
+async function loadProducts(){
+  const res = await fetch('/api/products');
+  const data = await res.json();
+  const table = document.getElementById('productsTable');
+  table.innerHTML="<tr><th>Name</th><th>Price</th><th>ID</th><th>Action</th></tr>";
+  data.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${p.name}</td><td>${p.price}</td><td>${p._id}</td>
+      <td><button onclick="deleteProduct('${p._id}')">Delete</button></td>`;
+    table.appendChild(tr);
+  });
+}
+
+// ------------------ DELETE PRODUCT BUTTON ------------------
+async function deleteProduct(id){
+  const res = await fetch('/api/products/' + id, {method:'DELETE'});
+  const data = await res.json();
+  alert(data.message);
+  loadProducts();
+}
+
+// ------------------ LOAD ORDERS ------------------
+async function loadOrders(){
+  const res = await fetch('/api/orders');
+  const data = await res.json();
+  const table = document.getElementById('ordersTable');
+  table.innerHTML="<tr><th>User ID</th><th>Products</th><th>Total Qty</th><th>Action</th></tr>";
+  data.forEach(o=>{
+    const products=o.items.map(i=>`${i.productId} x${i.quantity}`).join(", ");
+    const totalQty=o.items.reduce((sum,i)=>sum+i.quantity,0);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${o.userId}</td><td>${products}</td><td>${totalQty}</td>
+      <td><button onclick="completeOrder('${o._id}')">Complete</button></td>`;
+    table.appendChild(tr);
+  });
+}
+
+// ------------------ COMPLETE ORDER BUTTON ------------------
+async function completeOrder(id){
+  const res = await fetch('/api/orders/' + id + '/complete', {method:'POST'});
+  const data = await res.json();
+  alert(data.message);
+  loadOrders();
+}
+
+// ------------------ REFRESH ALL ------------------
+function refreshAll(){
+  loadUsers();
+  loadProducts();
+  loadOrders();
+}
+setInterval(refreshAll,5000);
+refreshAll();
+</script>
+
+</body>
+</html>

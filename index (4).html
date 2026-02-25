@@ -1,0 +1,11 @@
+function adminAuth(req,res,next){
+  const token=req.header("Authorization");
+  if(token==="adminSecret123"){
+    next();
+  }else{
+    res.status(401).send("Access denied");
+  }
+}
+
+// Use it for dashboard data
+app.get('/api/orders', adminAuth, async (req,res)=>{...});

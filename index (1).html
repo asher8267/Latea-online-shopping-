@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Latea Online Shopping</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#f2f2f2;
+  padding-bottom:80px;
+}
+.hidden{display:none;}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  background:#ffcc00;
+}
+.logo{font-weight:600;font-size:20px;}
+.header input{
+  width:65%;
+  padding:8px;
+  border:none;
+  border-radius:20px;
+}
+
+/* TOP BAR (BACK BUTTON) */
+.topbar{
+  display:flex;
+  align-items:center;
+  padding:10px;
+  background:#ffcc00;
+}
+.topbar i{
+  font-size:18px;
+  margin-right:10px;
+  cursor:pointer;
+}
+.topbar span{
+  font-weight:600;
+}
+
+/* SLIDER */
+.slider{
+  overflow:hidden;
+  height:160px;
+}
+.slides{
+  display:flex;
+  width:600%;
+  animation:slide 25s linear infinite;
+}
+.slides img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+}
+@keyframes slide{
+  0%{margin-left:0;}
+  20%{margin-left:-100%;}
+  40%{margin-left:-200%;}
+  60%{margin-left:-300%;}
+  80%{margin-left:-400%;}
+  100%{margin-left:-500%;}
+}
+
+/* PRODUCTS */
+.products{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  padding:10px;
+}
+.product{
+  background:white;
+  border-radius:10px;
+  padding:10px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.product img{
+  width:100%;
+  height:130px;
+  object-fit:cover;
+  border-radius:8px;
+}
+.price{color:green;font-weight:600;}
+button{
+  padding:6px 10px;
+  border:none;
+  border-radius:20px;
+  background:#0044cc;
+  color:white;
+  font-size:12px;
+  cursor:pointer;
+  margin-top:5px;
+}
+
+/* CART */
+.cart-item{
+  background:white;
+  margin:10px;
+  padding:10px;
+  border-radius:10px;
+}
+.qty-btn{
+  padding:4px 8px;
+  margin:0 5px;
+  background:#ffcc00;
+  color:black;
+}
+
+/* LOGIN */
+.login-box{
+  padding:20px;
+}
+.login-box input{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+/* BADGE */
+.badge{
+  position:absolute;
+  top:-5px;
+  right:-8px;
+  background:red;
+  color:white;
+  font-size:10px;
+  padding:3px 6px;
+  border-radius:50%;
+}
+
+/* NAV */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #ccc;
+}
+.nav-item{
+  text-align:center;
+  font-size:12px;
+  position:relative;
+  cursor:pointer;
+}
+.nav-item i{
+  display:block;
+  font-size:18px;
+}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="homePage">
+<div class="header">
+<div class="logo">LATEA</div>
+<input placeholder="Search on Latea">
+</div>
+
+<div class="slider">
+<div class="slides">
+<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9">
+<img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45">
+<img src="https://images.unsplash.com/photo-1585386959984-a41552262c48">
+<img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef">
+<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db">
+<img src="https://images.unsplash.com/photo-1510557880182-3f8c19c9de1b">
+</div>
+</div>
+
+<h3 style="padding:10px;">Products</h3>
+<div class="products" id="productList"></div>
+</div>
+
+<!-- PRODUCT DETAIL -->
+<div id="detailPage" class="hidden">
+<div class="topbar">
+<i class="fa fa-arrow-left" onclick="goHome()"></i>
+<span>Product Detail</span>
+</div>
+<div id="detailContent"></div>
+</div>
+
+<!-- CART -->
+<div id="cartPage" class="hidden">
+<div class="topbar">
+<i class="fa fa-arrow-left" onclick="goHome()"></i>
+<span>Your Cart</span>
+</div>
+<div id="cartItems"></div>
+<div style="padding:10px;">
+<button onclick="goCheckout()">Checkout</button>
+</div>
+</div>
+
+<!-- CHECKOUT -->
+<div id="checkoutPage" class="hidden">
+<div class="topbar">
+<i class="fa fa-arrow-left" onclick="goCart()"></i>
+<span>Checkout</span>
+</div>
+<div style="padding:10px;">
+<input placeholder="Delivery Address" style="width:100%;padding:10px;margin-bottom:10px;">
+<button onclick="placeOrder()">Place Order</button>
+</div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginPage" class="hidden">
+<div class="topbar">
+<i class="fa fa-arrow-left" onclick="goHome()"></i>
+<span>Login</span>
+</div>
+<div class="login-box">
+<input type="text" placeholder="Email">
+<input type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+</div>
+
+<!-- NAV -->
+<div class="bottom-nav">
+<div class="nav-item" onclick="goHome()">
+<i class="fa fa-home"></i>Home
+</div>
+
+<div class="nav-item" onclick="goCart()">
+<i class="fa fa-shopping-cart"></i>
+<span id="cartCount" class="badge">0</span>
+Cart
+</div>
+
+<div class="nav-item" onclick="goLogin()">
+<i class="fa fa-user"></i>Account
+</div>
+</div>
+
+<script>
+
+let cart = JSON.parse(localStorage.getItem("lateaCart")) || [];
+
+const products=[
+{
+name:"iPhone 11",
+price:35999,
+image:"https://images.unsplash.com/photo-1598327105666-5b89351aff97",
+description:"128GB Storage, Dual Camera"
+},
+{
+name:"Tecno Camon 20",
+price:28000,
+image:"https://images.unsplash.com/photo-1610945415295-d9bbf067e59c",
+description:"6.6 inch display, 8GB RAM"
+},
+{
+name:"Smart Watch",
+price:4000,
+image:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b",
+description:"Fitness tracking smartwatch"
+}
+];
+
+const productList=document.getElementById("productList");
+
+products.forEach((p,index)=>{
+const div=document.createElement("div");
+div.classList.add("product");
+div.innerHTML=`
+<img src="${p.image}">
+<h4>${p.name}</h4>
+<div class="price">KSh ${p.price}</div>
+<button onclick="viewDetail(${index})">View</button>
+`;
+productList.appendChild(div);
+});
+
+function viewDetail(index){
+showPage("detailPage");
+const p=products[index];
+document.getElementById("detailContent").innerHTML=`
+<div style="padding:10px;">
+<img src="${p.image}" style="width:100%;border-radius:10px;">
+<h3>${p.name}</h3>
+<p>${p.description}</p>
+<h4 style="color:green;">KSh ${p.price}</h4>
+<button onclick="addToCart(${index})">Add to Cart</button>
+</div>
+`;
+}
+
+function addToCart(index){
+let found=cart.find(item=>item.name===products[index].name);
+if(found){found.qty+=1;}
+else{cart.push({...products[index],qty:1});}
+saveCart();
+alert("Added to Cart");
+}
+
+function saveCart(){
+localStorage.setItem("lateaCart",JSON.stringify(cart));
+updateCartCount();
+}
+
+function updateCartCount(){
+document.getElementById("cartCount").innerText=
+cart.reduce((total,item)=>total+item.qty,0);
+}
+updateCartCount();
+
+function displayCart(){
+const cartItems=document.getElementById("cartItems");
+cartItems.innerHTML="";
+cart.forEach((item,index)=>{
+cartItems.innerHTML+=`
+<div class="cart-item">
+<h4>${item.name}</h4>
+<p>KSh ${item.price}</p>
+<button class="qty-btn" onclick="changeQty(${index},-1)">-</button>
+${item.qty}
+<button class="qty-btn" onclick="changeQty(${index},1)">+</button>
+<button onclick="removeItem(${index})">Remove</button>
+</div>
+`;
+});
+}
+
+function changeQty(index,amount){
+cart[index].qty+=amount;
+if(cart[index].qty<=0){cart.splice(index,1);}
+saveCart();
+displayCart();
+}
+
+function removeItem(index){
+cart.splice(index,1);
+saveCart();
+displayCart();
+}
+
+function login(){
+alert("Login Successful (Demo)");
+goHome();
+}
+
+function goHome(){showPage("homePage");}
+function goCart(){showPage("cartPage");displayCart();}
+function goCheckout(){showPage("checkoutPage");}
+function goLogin(){showPage("loginPage");}
+
+function placeOrder(){
+alert("Order placed successfully!");
+cart=[];
+saveCart();
+goHome();
+}
+
+function showPage(id){
+["homePage","cartPage","checkoutPage","detailPage","loginPage"]
+.forEach(p=>document.getElementById(p).classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+}
+
+</script>
+
+</body>
+</html>
